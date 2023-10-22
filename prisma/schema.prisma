@@ -12,13 +12,29 @@ datasource db {
 
 model User{
    id String @id @map("user_id") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-   name String
-   email String @unique
-   userName String @unique
+   name String?
+   email String
+   userName String?
    image String?
-   bio String ?
+   bio String?
    isVerified Boolean @default(false)
    tweets Tweet[]
+   tokens Token []
+}
+model Token{
+  id Int @unique @id @default(autoincrement())
+  type Type @default(EMAIL)
+  expiration DateTime
+  content String @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId String @map("user_id") @db.Uuid
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum Type {
+  API
+  EMAIL
 }
 
 model Tweet{
